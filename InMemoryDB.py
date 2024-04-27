@@ -23,16 +23,25 @@ class InMemoryDB:
     def commit(self):
         if not self.transaction_in_progress:
             raise Exception("No transaction in progress")
-        self.data = self.transaction_data
+        self.data.update(self.transaction_data)
         self.transaction_in_progress = False
-        self.transaction_data = {}
+        self.transaction_data.clear()
 
     def rollback(self):
         if not self.transaction_in_progress:
             raise Exception("No transaction in progress")
         self.transaction_in_progress = False
         self.transaction_data = {}
-    
+
+    def display(self):
+        print(f"\nData: {self.data}")
+        print(f"Transaction Data: {self.transaction_data}")
+
+        if self.transaction_in_progress:
+            print(Fore.GREEN + "Transaction Active")
+        else:
+            print(Fore.RED + "Transaction Inactive")
+
 
 
 def main():
@@ -41,14 +50,8 @@ def main():
     print("Welcome to Key-Value Transaction Database")
     while True:   
 
-        print(f"\nData: {database.data}")
-        print(f"Transaction Data: {database.transaction_data}")
+        database.display()
 
-        if database.transaction_in_progress:
-            print(Fore.GREEN + "Transaction Active")
-        else:
-            print(Fore.RED + "Transaction Inactive")
-            
         print(Fore.WHITE + "\n1. Get value by key")
         print("2. Put value by key")
         print("3. Begin transaction")
